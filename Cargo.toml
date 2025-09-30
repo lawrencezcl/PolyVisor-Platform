@@ -1,0 +1,56 @@
+[workspace]
+members = [
+    # "blockchain/node",
+    # "blockchain/runtime", 
+    # "blockchain/pallets/analytics",
+    # "blockchain/pallets/privacy",
+    # "contracts/analytics",
+    # "contracts/zkproof", 
+    # "contracts/privacy",
+    # "zkproof",
+    # "privacy",
+    # "data-collection",
+    "backend"
+]
+
+resolver = "2"
+
+[workspace.dependencies]
+# Substrate dependencies
+frame-support = { version = "4.0.0-dev", default-features = false }
+frame-system = { version = "4.0.0-dev", default-features = false }
+sp-std = { version = "8.0.0", default-features = false }
+sp-runtime = { version = "24.0.0", default-features = false }
+sp-core = { version = "21.0.0", default-features = false }
+pallet-balances = { version = "4.0.0-dev", default-features = false }
+
+# ink! dependencies  
+ink = { version = "4.3", default-features = false }
+scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
+scale-info = { version = "2.6", default-features = false, features = ["derive"] }
+
+# Cryptography
+bellman = "0.14"
+pairing = "0.23"
+rand = "0.8"
+sha2 = "0.11"
+
+# Async & Web
+tokio = { version = "1.0", features = ["full"] }
+reqwest = { version = "0.11", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# API & Database
+axum = "0.7"
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid"] }
+redis = "0.24"
+
+# Time & Utilities
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.0", features = ["v4", "serde"] }
+tracing = "0.1"
+anyhow = "1.0"
+
+[profile.release]
+panic = "unwind"

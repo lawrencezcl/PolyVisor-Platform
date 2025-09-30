@@ -1,0 +1,61 @@
+[package]
+name = "polyvisor-backend"
+version = "0.1.0"
+edition = "2021"
+authors = ["PolyVisor Team"]
+description = "PolyVisor Backend API Service"
+license = "MIT"
+
+[dependencies]
+# Web framework
+axum = { version = "0.7", features = ["macros", "ws"] }
+tower = { version = "0.4", features = ["full"] }
+tower-http = { version = "0.5", features = ["fs", "cors", "trace"] }
+hyper = "1.0"
+
+# Async runtime
+tokio = { version = "1.0", features = ["full"] }
+futures = "0.3"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Database
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid", "json"] }
+
+# Redis
+redis = { version = "0.24", features = ["tokio-comp", "connection-manager"] }
+
+# GraphQL
+async-graphql = { version = "7.0", features = ["chrono", "uuid"] }
+async-graphql-axum = "7.0"
+
+# WebSocket
+tokio-tungstenite = "0.21"
+
+# Polkadot integration
+subxt = { version = "0.32", features = ["substrate-compat"] }
+
+# Local dependencies
+# zkproof = { path = "../zkproof" }
+# privacy = { path = "../privacy" }
+# data-collection = { path = "../data-collection" }
+
+# Utilities
+uuid = { version = "1.0", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Configuration
+config = "0.13"
+dotenv = "0.15"
+
+# HTTP client
+reqwest = { version = "0.11", features = ["json"] }
+
+[dev-dependencies]
+tower-test = "0.4"

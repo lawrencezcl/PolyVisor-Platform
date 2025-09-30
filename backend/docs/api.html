@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PolyVisor API 文档</title>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+        h1, h2, h3 { color: #333; }
+        .endpoint { background: #f4f4f4; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .method { font-weight: bold; color: #007acc; }
+        .path { font-family: monospace; background: #eee; padding: 2px 5px; }
+        code { background: #f0f0f0; padding: 2px 4px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>PolyVisor API 文档</h1>
+    
+    <h2>概述</h2>
+    <p>PolyVisor 是一个隐私保护的Polkadot网络分析平台，提供RESTful API和GraphQL接口。</p>
+    
+    <h2>基础信息</h2>
+    <ul>
+        <li><strong>基础URL:</strong> <code>http://localhost:8080</code></li>
+        <li><strong>API版本:</strong> v1</li>
+        <li><strong>认证:</strong> 基于地址的认证（开发阶段）</li>
+    </ul>
+    
+    <h2>API 端点</h2>
+    
+    <h3>健康检查</h3>
+    <div class="endpoint">
+        <span class="method">GET</span> <span class="path">/health</span><br>
+        <strong>描述:</strong> 获取服务健康状态<br>
+        <strong>响应:</strong> JSON格式的健康状态信息
+    </div>
+    
+    <h3>网络指标</h3>
+    <div class="endpoint">
+        <span class="method">GET</span> <span class="path">/api/v1/metrics</span><br>
+        <strong>描述:</strong> 获取网络指标数据<br>
+        <strong>参数:</strong> metric_type, privacy_level, from, to, limit, offset
+    </div>
+    
+    <div class="endpoint">
+        <span class="method">POST</span> <span class="path">/api/v1/metrics</span><br>
+        <strong>描述:</strong> 提交新的指标数据<br>
+        <strong>请求体:</strong> JSON格式的指标数据
+    </div>
+    
+    <h3>网络健康度</h3>
+    <div class="endpoint">
+        <span class="method">GET</span> <span class="path">/api/v1/health/network</span><br>
+        <strong>描述:</strong> 获取网络健康状况<br>
+        <strong>参数:</strong> time_range, detail_level
+    </div>
+    
+    <h3>隐私设置</h3>
+    <div class="endpoint">
+        <span class="method">POST</span> <span class="path">/api/v1/privacy/settings</span><br>
+        <strong>描述:</strong> 设置用户隐私偏好<br>
+        <strong>请求体:</strong> 隐私设置JSON对象
+    </div>
+    
+    <div class="endpoint">
+        <span class="method">GET</span> <span class="path">/api/v1/privacy/settings/{address}</span><br>
+        <strong>描述:</strong> 获取用户隐私设置<br>
+        <strong>路径参数:</strong> address - 用户地址
+    </div>
+    
+    <h3>零知识证明</h3>
+    <div class="endpoint">
+        <span class="method">POST</span> <span class="path">/api/v1/proofs/generate</span><br>
+        <strong>描述:</strong> 生成零知识证明<br>
+        <strong>请求体:</strong> 证明生成请求JSON
+    </div>
+    
+    <div class="endpoint">
+        <span class="method">POST</span> <span class="path">/api/v1/proofs/verify</span><br>
+        <strong>描述:</strong> 验证零知识证明<br>
+        <strong>请求体:</strong> 证明验证请求JSON
+    </div>
+    
+    <h3>贡献者管理</h3>
+    <div class="endpoint">
+        <span class="method">GET</span> <span class="path">/api/v1/contributors</span><br>
+        <strong>描述:</strong> 获取贡献者列表<br>
+        <strong>参数:</strong> contributor_type, verification_status, limit, offset
+    </div>
+    
+    <div class="endpoint">
+        <span class="method">POST</span> <span class="path">/api/v1/contributors</span><br>
+        <strong>描述:</strong> 注册新贡献者<br>
+        <strong>请求体:</strong> 贡献者注册信息JSON
+    </div>
+    
+    <h2>GraphQL接口</h2>
+    <div class="endpoint">
+        <span class="method">GET/POST</span> <span class="path">/graphql</span><br>
+        <strong>描述:</strong> GraphQL查询和变更接口<br>
+        <strong>Playground:</strong> <a href="/graphql">访问GraphQL Playground</a>
+    </div>
+    
+    <h2>WebSocket接口</h2>
+    <div class="endpoint">
+        <span class="method">WebSocket</span> <span class="path">/ws</span><br>
+        <strong>描述:</strong> 实时数据推送WebSocket连接<br>
+        <strong>协议:</strong> 基于文本消息的JSON通信
+    </div>
+    
+    <h2>错误处理</h2>
+    <p>API使用标准HTTP状态码，错误响应格式：</p>
+    <pre><code>{
+  "error": "错误类型",
+  "message": "详细错误描述",
+  "timestamp": "ISO 8601时间戳"
+}</code></pre>
+    
+    <h2>隐私保护</h2>
+    <p>PolyVisor实施多层次隐私保护：</p>
+    <ul>
+        <li><strong>零知识证明:</strong> 验证数据完整性而不泄露原始数据</li>
+        <li><strong>差分隐私:</strong> 在统计查询中添加噪声保护个体隐私</li>
+        <li><strong>K-匿名性:</strong> 确保个体数据无法被识别</li>
+        <li><strong>数据泛化:</strong> 对敏感数据进行适度泛化处理</li>
+    </ul>
+    
+    <footer>
+        <p><em>PolyVisor API v1.0 - 隐私优先的Polkadot网络分析平台</em></p>
+    </footer>
+</body>
+</html>

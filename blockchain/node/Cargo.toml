@@ -1,0 +1,58 @@
+[package]
+name = "polyvisor-node"
+version = "0.1.0"
+edition = "2021"
+authors = ["PolyVisor Team"]
+description = "PolyVisor Substrate Node"
+license = "MIT"
+
+[dependencies]
+# Substrate Node
+sc-cli = { version = "0.10.0-dev", features = ["wasmtime"] }
+sc-executor = { version = "0.10.0-dev", features = ["wasmtime"] }
+sc-network = "0.10.0-dev"
+sc-service = { version = "0.10.0-dev", default-features = false }
+sc-telemetry = "0.10.0-dev"
+sc-transaction-pool = "4.0.0-dev"
+sc-transaction-pool-api = "4.0.0-dev"
+sc-offchain = "4.0.0-dev"
+sc-consensus-aura = "0.10.0-dev"
+sc-consensus = "0.10.0-dev"
+sc-consensus-slots = "0.10.0-dev"
+sc-finality-grandpa = "0.10.0-dev"
+sc-client-api = "4.0.0-dev"
+sc-rpc-api = "0.10.0-dev"
+sc-basic-authorship = "0.10.0-dev"
+
+# Substrate Primitives
+sp-core = { version = "21.0.0", features = ["std"] }
+sp-runtime = { version = "24.0.0", features = ["std"] }
+sp-consensus-aura = { version = "0.10.0-dev", features = ["std"] }
+sp-consensus-grandpa = { version = "4.0.0-dev", features = ["std"] }
+sp-inherents = { version = "4.0.0-dev", features = ["std"] }
+sp-keyring = "24.0.0"
+sp-timestamp = "4.0.0-dev"
+
+# Frame
+frame-system = "4.0.0-dev"
+pallet-transaction-payment = { version = "4.0.0-dev", features = ["std"] }
+
+# Local Dependencies
+polyvisor-runtime = { path = "../runtime" }
+
+# Other
+futures = "0.3.21"
+clap = { version = "4.0.9", features = ["derive"] }
+jsonrpsee = { version = "0.16.2", features = ["server"] }
+
+[build-dependencies]
+substrate-build-script-utils = "3.0.0"
+
+[features]
+default = []
+runtime-benchmarks = [
+    "polyvisor-runtime/runtime-benchmarks",
+]
+try-runtime = [
+    "polyvisor-runtime/try-runtime",
+]

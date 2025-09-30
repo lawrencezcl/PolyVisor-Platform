@@ -1,0 +1,117 @@
+version: '3.8'
+
+services:
+  # Substrate区块链节点
+  blockchain:
+    build: 
+      context: ./blockchain
+      dockerfile: Dockerfile
+    ports:
+      - "0.0.0.0:9944:9944"   # WebSocket RPC - 绑定到所有接口
+      - "0.0.0.0:9933:9933"   # HTTP RPC - 绑定到所有接口
+      - "0.0.0.0:30333:30333" # P2P - 绑定到所有接口
+    volumes:
+      - blockchain_data:/data
+    environment:
+      - RUST_LOG=info
+    command: [
+      "./target/release/polyvisor-node", 
+      "--dev", 
+      "--ws-external", 
+      "--rpc-external", 
+      "--rpc-cors=all",
+      "--unsafe-ws-external",
+      "--unsafe-rpc-external",
+      "--rpc-methods=unsafe"
+    ]
+    networks:
+      - polyvisor-network
+
+  # 后端API服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "0.0.0.0:8080:8080"  # 绑定到所有接口
+    depends_on:
+      - redis
+      - postgres
+      - blockchain
+    environment:
+      - DATABASE_URL=postgresql://polyvisor:password@postgres:5432/polyvisor
+      - REDIS_URL=redis://redis:6379
+      - BLOCKCHAIN_WS_URL=ws://blockchain:9944
+      - RUST_LOG=info
+      - SERVER_HOST=0.0.0.0  # 监听所有接口
+      - SERVER_PORT=8080
+    networks:
+      - polyvisor-network
+
+  # 前端React应用
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "0.0.0.0:3000:3000"  # 绑定到所有接口
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_URL=http://${SERVER_IP:-localhost}:8080
+      - REACT_APP_WS_URL=ws://${SERVER_IP:-localhost}:9944
+      - HOST=0.0.0.0  # React开发服务器监听所有接口
+    networks:
+      - polyvisor-network
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - polyvisor-network
+
+  # PostgreSQL数据库
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=polyvisor
+      - POSTGRES_USER=polyvisor
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - polyvisor-network
+
+  # 数据收集服务
+  data-collector:
+    build:
+      context: ./data-collection
+      dockerfile: Dockerfile
+    depends_on:
+      - blockchain
+      - backend
+      - redis
+    environment:
+      - BLOCKCHAIN_WS_URL=ws://blockchain:9944
+      - API_URL=http://backend:8080
+      - REDIS_URL=redis://redis:6379
+      - RUST_LOG=info
+    networks:
+      - polyvisor-network
+
+volumes:
+  blockchain_data:
+  postgres_data:
+  redis_data:
+
+networks:
+  polyvisor-network:
+    driver: bridge
